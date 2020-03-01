@@ -33,7 +33,7 @@
                 <a href="javascript:void(0)" class="navbar-link" @click="logOut" v-else>Logout</a>
                 <div class="navbar-cart-container">
                   <span class="navbar-cart-count" v-if="cartCount>0">{{cartCount}}</span>
-                  <a class="navbar-link navbar-cart-link" href="/#/cart">
+                  <a class="navbar-link navbar-cart-link" href="javascript:void(0)" @click="showCart">
                     <svg class="navbar-cart-logo">
                       <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-cart"></use>
                     </svg>
@@ -219,6 +219,9 @@
                     let res = response.data;
                     this.$store.dispatch("initCartCount",res.result);
                 });
+            },
+            showCart(){
+              this.$router.push({path:"/cart"});
             }
         }
     }
