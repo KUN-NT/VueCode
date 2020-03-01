@@ -2,7 +2,7 @@
     <section class="bread">
         <div class="bread-wrap">
             <nav class="">
-                <a href="/">
+                <a href="javascript:;" @click='goHome'>
                     Home
                 </a>
                 <slot></slot>
@@ -42,6 +42,11 @@
         data(){
             return{
                 msg:'hello vue'
+            }
+        },
+        methods:{
+            goHome(){
+              this.$router.push({path:"/"});
             }
         }
     }

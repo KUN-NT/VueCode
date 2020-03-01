@@ -5,12 +5,12 @@ module.exports = {
         port: 9090,
         proxy: {
             '/api/*': {
-                target: 'http://localhost:3000'
+                target: 'http://119.45.21.130:3000'
             }
         }
     },
     //项目的基本路径
-    publicPath: '/',
+    publicPath: '/dist',
     //项目的生成目录
     outputDir: 'dist',
     //修改index.html的路径
