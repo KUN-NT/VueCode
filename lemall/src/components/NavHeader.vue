@@ -22,7 +22,7 @@
       </svg>
         <div class="navbar">
             <div class="navbar-left-container">
-              <a href="/">
+              <a href="javascript:;" @click='goHome'>
                 <img class="navbar-brand-logo" src="/static/logo.png">
               </a>
             </div>
@@ -222,6 +222,9 @@
             },
             showCart(){
               this.$router.push({path:"/cart"});
+            },
+            goHome(){
+              this.$router.push({path:"/"});
             }
         }
     }
