@@ -11,7 +11,7 @@
         <div class="filter-nav">
           <span class="sortby">Sort by:</span>
           <a href="javascript:void(0)" class="default cur">Default</a>
-          <a href="javascript:void(0)" class="price">
+          <a href="javascript:void(0)" class="price" @click="sortGoods">
             Price
             <svg class="icon icon-arrow-short">
               <use xlink:href="#icon-arrow-short" />
@@ -26,10 +26,10 @@
             <dl class="filter-price">
               <dt>Price:</dt>
               <dd>
-                <a href="javascript:void(0)" :class="{'cur':priceCheck=='all'}" @click="priceCheck='all'">All</a>
+                <a href="javascript:void(0)" :class="{'cur':priceLevel=='all'}" @click="priceLevel='all'">All</a>
               </dd>
               <dd v-for="(price,index) in priceFilter" :key="index">
-                <a href="javascript:void(0)" @click="setPriceFilter(index)" :class="{'cur':priceCheck==index}">{{price.startPrice}} - {{price.endPrice}}</a>
+                <a href="javascript:void(0)" @click="setPriceFilter(index)" :class="{'cur':priceLevel==index}">{{price.startPrice}} - {{price.endPrice}}</a>
               </dd>
             </dl>
           </div>
@@ -54,6 +54,9 @@
                   </div>
                 </li>
               </ul>
+              <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+                <img src="./../assets/loading-spinning-bubbles.svg" v-show='loading'/>
+              </div>
             </div>
           </div>
           <!-- list end-->
@@ -73,7 +76,7 @@ export default {
   data() {
     return {
         goodsList:[],
-        priceCheck:'all',
+        priceLevel:'all',
         priceFilter:[
           {
             startPrice:0,
@@ -89,7 +92,12 @@ export default {
           }
         ],
         filterBy:false,
-        overLayFlag:false
+        overLayFlag:false,
+        sortFlag:true,
+        pageIndex:1,
+        pageSize:8,
+        busy:false,
+        loading:false
     };
   },
   components: {
@@ -101,16 +109,37 @@ export default {
       this.getGoodsList();
   },
   methods:{
-      getGoodsList(){
+      getGoodsList(flag){
           // axios.get('/api/goods').then(res=>{
           //     let goods=res.data
           //     this.goodsList=goods.result;
           //     console.log(this.goodsList)
           // })
-          axios.get('/goods').then(res=>{
+          let params={
+            pageIndex:this.pageIndex,
+            pageSize:this.pageSize,
+            sort:this.sortFlag?1:-1,
+            priceLevel:this.priceLevel
+          }
+          this.loading=true;
+          axios.get('/goods',{params:params}).then(res=>{
+              this.loading=false;
               let goods=res.data
-              this.goodsList=goods.result.list;
-              console.log(this.goodsList)
+              if(res.status=="200"){
+                if(flag){
+                  this.goodsList=this.goodsList.concat(goods.result.list);
+                  if(goods.result.count<this.pageSize){
+                    this.busy=true;
+                  }else{
+                    this.busy=false;
+                  }
+                }else{
+                  this.goodsList=goods.result.list;
+                  this.busy=false;
+                }
+              }else{
+                this.goodsList=[];
+              }
           })
       },
       showFilterPop(){
@@ -122,8 +151,22 @@ export default {
         this.overLayFlag=false;
       },
       setPriceFilter(index){
-        this.priceCheck=index;
-        closePop();
+        this.priceLevel=index;
+        this.pageIndex=1;
+        this.getGoodsList();
+        this.closePop();
+      },
+      sortGoods(){
+        this.sortFlag=!this.sortFlag;
+        this.pageIndex=1;
+        this.getGoodsList();
+      },
+      loadMore(){
+        this.busy=true;
+        setTimeout(()=>{
+          this.pageIndex++;
+          this.getGoodsList(true);
+        },500)
       }
   }
 };
