@@ -5,6 +5,8 @@ var productSchema=new Schme({
     "productId":String,
     "productName": String,
     "salePrice":Number,
+    "productNum":Number,
+    "checked":String,
     "productImg":String,
     "productUrl":String
 });
