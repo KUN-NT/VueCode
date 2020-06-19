@@ -14,6 +14,9 @@ module.exports = {
       //访问goods时 会默认转到http://localhost:3000
       '/goods':{
         target:'http://localhost:3000'
+      },
+      '/users':{
+        target:'http://localhost:3000'
       }
     },
 
