@@ -13,7 +13,7 @@
           <a href="javascript:void(0)" class="default cur">Default</a>
           <a href="javascript:void(0)" class="price" @click="sortGoods">
             Price
-            <svg class="icon icon-arrow-short">
+            <svg class="icon icon-arrow-short" v-bind:class="{'sort-up':!sortFlag}">
               <use xlink:href="#icon-arrow-short" />
             </svg>
           </a>
@@ -42,6 +42,7 @@
                 <li v-for="(item,index) in goodsList" :key="index">
                   <div class="pic">
                     <a href="#">
+                      <!-- 图片懒加载 -->
                       <img v-lazy="'/static/'+item.productImage" alt>
                     </a>
                   </div>
@@ -54,6 +55,7 @@
                   </div>
                 </li>
               </ul>
+              <!-- loadMore滚动事件 busy是否启用滚动事件 10间隔多大触发滚动事件 -->
               <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
                 <img src="./../assets/loading-spinning-bubbles.svg" v-show='loading'/>
               </div>
@@ -64,6 +66,26 @@
       </div>
     </div>
     <div class="md-overlay" v-show="overLayFlag" @click="closePop"></div>
+    <modal v-bind:mdShow="mdShow" @close="closeModal">
+      <p slot="message">
+        请先登录否则无法加入购物车
+      </p>
+      <div slot="btnGroup">
+        <a class="btn btn--m" href="javascript:;" @click="mdShow=false">关闭</a>
+      </div>
+    </modal>
+    <modal v-bind:mdShow="mdShowCart" @close="closeModal">
+      <p slot="message">
+        <svg class="icon-status-ok">
+          <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-status-ok" />
+        </svg>
+        <span>加入购物车成功！</span>
+      </p>
+      <div slot="btnGroup">
+        <a class="btn btn--m" href="javascript:;" @click="mdShowCart=false">继续购物</a>
+        <router-link class="btn btn--m" href="javascript:;" to="/cart">前往购物车</router-link>
+      </div>
+    </modal>
     <NavFooter></NavFooter>
   </div>
 </template>
@@ -71,12 +93,14 @@
 import NavHeader from "@/components/NavHeader";
 import NavFooter from "@/components/NavFooter";
 import NavBread from "@/components/NavBread";
+import Modal from "@/components/Modal";
 import axios from 'axios';
 export default {
   data() {
     return {
         goodsList:[],
         priceLevel:'all',
+        //价格区间
         priceFilter:[
           {
             startPrice:0,
@@ -97,18 +121,22 @@ export default {
         pageIndex:1,
         pageSize:8,
         busy:false,
-        loading:false
+        loading:false,
+        mdShow:false,
+        mdShowCart:false
     };
   },
   components: {
     NavHeader,
     NavFooter,
-    NavBread
+    NavBread,
+    Modal
   },
   mounted(){
       this.getGoodsList();
   },
   methods:{
+      //获取商品列表
       getGoodsList(flag){
           // axios.get('/api/goods').then(res=>{
           //     let goods=res.data
@@ -122,10 +150,10 @@ export default {
             priceLevel:this.priceLevel
           }
           this.loading=true;
-          axios.get('/goods',{params:params}).then(res=>{
+          axios.get('/goods/list',{params:params}).then(res=>{
               this.loading=false;
               let goods=res.data
-              if(res.status=="200"){
+              if(goods.status=="0"){
                 if(flag){
                   this.goodsList=this.goodsList.concat(goods.result.list);
                   if(goods.result.count<this.pageSize){
@@ -172,13 +200,33 @@ export default {
         axios.post('/goods/addCart',{productId:productId}).then(
           (res)=>{
             if(res.data.status==0){
-              alert('加入成功');
+              this.mdShowCart=true
             }else{
-              alert(`msg:${res.msg}`)
+              this.mdShow=true
             }
           }
         )
+      },
+      closeModal(){
+        this.mdShow=false;
+        this.mdShowCart=false;
       }
   }
 };
 </script>
+
+<style>
+  .sort-up{
+    /* 翻转180° */
+    transform: rotate(180deg);
+    /* 翻转动画 淡出 */
+    transition: all .3s ease-out;
+  }
+  .icon-arrow-short{
+    transition: all .3s ease-out;
+  }
+  .btn:hover{
+    background-color: #ffe5e6;
+    transition: all .3s ease-out;
+  }
+</style>

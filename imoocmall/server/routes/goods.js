@@ -9,16 +9,18 @@ mongoose.connection.on("connected", function () {
     console.log("MongoDB connected success.")
 });
 
+//监听连接失败信息
 mongoose.connection.on("error", function () {
     console.log("MongoDB conected fail.")
 });
 
+//监听连接的断开信息
 mongoose.connection.on("disconnected", function () {
     console.log("MongoDB connected disconnexted.")
 });
 
 //查询商品列表数据
-router.get("/", (req, res, next) => {
+router.get("/list", (req, res, next) => {
     //获取url中参数
     //http://localhost:3000/goods?pageIndex=1&pageSize=10&sort=1
     let pageIndex = parseInt(req.param('pageIndex'));

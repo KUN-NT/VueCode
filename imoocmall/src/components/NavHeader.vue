@@ -73,6 +73,7 @@
         </div>
       </div>
     </div>
+    <!-- 登录框 Start -->
     <div class="md-modal modal-msg md-modal-transition" v-bind:class="{'md-show':loginModalFlag}">
       <div class="md-modal-inner">
         <div class="md-top">
@@ -118,6 +119,7 @@
       </div>
     </div>
     <div class="md-overlay" v-if="loginModalFlag" @click="loginModalFlag=false"></div>
+    <!-- 登录框 End -->
   </header>
 </template>
 
@@ -130,12 +132,17 @@ export default {
     return{
       userName:'',
       userPwd:'',
+      //是否显示错误提示
       errorTip:false,
+      //是否显示登录框
       loginModalFlag:false,
-      nickName:''
+      //登录后显示用户名
+      nickName:'',
+      cartCount:0
     }
   },
   methods:{
+    //登录方法
     login(){
       if(!this.userName||!this.userPwd){
         this.errorTip=true;
@@ -152,6 +159,7 @@ export default {
         }
       })
     },
+    //登出方法
     logOut(){
       axios.post('/users/logout').then(response=>{
         let res=response.data;
@@ -159,7 +167,19 @@ export default {
           this.nickName='';
         }
       })
+    },
+    //检测是否登录
+    checkLogin(){
+      axios.get('/users/checkLogin').then(response=>{
+        let res=response.data;
+        if(res.status=='0'){
+          this.nickName=res.result;
+        }
+      })
     }
+  },
+  mounted(){
+    this.checkLogin();
   }
 };
 </script>
