@@ -75,7 +75,6 @@ router.get("/list", (req, res, next) => {
 //加入购物车
 router.post("/addCart", (req, res, next) => {
     var userId = "admin", productId = req.body.productId;
-    console.log(productId)
     var User = require('../models/users');
     User.findOne({ userId: userId }, (err, userDoc) => {
         if (err) {
@@ -92,7 +91,7 @@ router.post("/addCart", (req, res, next) => {
                         item.productNum++;
                     }
                 });
-                if (goodsItem) {
+                if (JSON.stringify(goodsItem)!="{}") {
                     userDoc.save((err2, doc) => {
                         if (err2) {
                             res.json({

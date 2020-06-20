@@ -26,7 +26,7 @@
             <dl class="filter-price">
               <dt>Price:</dt>
               <dd>
-                <a href="javascript:void(0)" :class="{'cur':priceLevel=='all'}" @click="priceLevel='all'">All</a>
+                <a href="javascript:void(0)" :class="{'cur':priceLevel=='all'}" @click="setAll">All</a>
               </dd>
               <dd v-for="(price,index) in priceFilter" :key="index">
                 <a href="javascript:void(0)" @click="setPriceFilter(index)" :class="{'cur':priceLevel==index}">{{price.startPrice}} - {{price.endPrice}}</a>
@@ -66,6 +66,7 @@
       </div>
     </div>
     <div class="md-overlay" v-show="overLayFlag" @click="closePop"></div>
+    <!-- 绑定属性传递给子组件  声明事件供子组件调用 -->
     <modal v-bind:mdShow="mdShow" @close="closeModal">
       <p slot="message">
         请先登录否则无法加入购物车
@@ -177,6 +178,10 @@ export default {
       closePop(){
         this.filterBy=false;
         this.overLayFlag=false;
+      },
+      setAll(){
+        this.priceLevel='all'
+        this.setPriceFilter('all')
       },
       setPriceFilter(index){
         this.priceLevel=index;
