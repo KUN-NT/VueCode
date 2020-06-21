@@ -2,7 +2,7 @@
   <div>
     <nav-header></nav-header>
     <nav-bread>
-        <span>My Cart</span>
+      <span>My Cart</span>
     </nav-bread>
     <svg
       style="position: absolute; width: 0; height: 0; overflow: hidden;"
@@ -107,25 +107,29 @@
                   </div>
                 </div>
                 <div class="cart-tab-2">
-                  <div class="item-price">{{item.salePrice}}</div>
+                  <div class="item-price">{{item.salePrice | currency('￥')}}</div>
                 </div>
                 <div class="cart-tab-3">
                   <div class="item-quantity">
                     <div class="select-self select-self-open">
                       <div class="select-self-area">
-                        <a class="input-sub">-</a>
+                        <a class="input-sub" @click="editCart('minu',item)">-</a>
                         <span class="select-ipt">{{item.productNum}}</span>
-                        <a class="input-add">+</a>
+                        <a class="input-add" @click="editCart('add',item)">+</a>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div class="cart-tab-4">
-                  <div class="item-price-total">{{item.salePrice*item.productNum}}</div>
+                  <div class="item-price-total">{{item.salePrice*item.productNum | currency('￥')}}</div>
                 </div>
                 <div class="cart-tab-5">
                   <div class="cart-item-opration">
-                    <a href="javascript:;" class="item-edit-btn" @click='delCartConfirm(item.productId)'>
+                    <a
+                      href="javascript:;"
+                      class="item-edit-btn"
+                      @click="delCartConfirm(item.productId)"
+                    >
                       <svg class="icon icon-del">
                         <use xlink:href="#icon-del" />
                       </svg>
@@ -140,8 +144,8 @@
           <div class="cart-foot-inner">
             <div class="cart-foot-l">
               <div class="item-all-check">
-                <a href="javascipt:;">
-                  <span class="checkbox-btn item-check-btn">
+                <a href="javascipt:;" @click="selectAll">
+                  <span class="checkbox-btn item-check-btn" :class="{'check':selectAllFlag}">
                     <svg class="icon icon-ok">
                       <use xlink:href="#icon-ok" />
                     </svg>
@@ -153,7 +157,7 @@
             <div class="cart-foot-r">
               <div class="item-total">
                 Item total:
-                <span class="total-price">500</span>
+                <span class="total-price">{{totalPrice | currency('￥')}}</span>
               </div>
               <div class="btn-wrap">
                 <a class="btn btn--red">Checkout</a>
@@ -163,67 +167,135 @@
         </div>
       </div>
     </div>
-    <Modal :mdShow='modalConfirm' @close='closeModal'>
-        <p slot='message'>你确定将此商品移出购物车吗？</p>
-        <div slot='btnGroup'>
-            <a class="btn btn--m" href="javascript:;" @click="delCart">确定</a>
-            <a class="btn btn--m" href="javascript:;" @click="modalConfirm=false">关闭</a>
-        </div>
+    <Modal :mdShow="modalConfirm" @close="closeModal">
+      <p slot="message">你确定将此商品移出购物车吗？</p>
+      <div slot="btnGroup">
+        <a class="btn btn--m" href="javascript:;" @click="delCart">确定</a>
+        <a class="btn btn--m" href="javascript:;" @click="modalConfirm=false">关闭</a>
+      </div>
     </Modal>
     <nav-footer></nav-footer>
   </div>
 </template>
 
 <script>
-import './../assets/css/checkout.css'
+import "./../assets/css/checkout.css";
 import NavHeader from "@/components/NavHeader";
 import NavFooter from "@/components/NavFooter";
 import NavBread from "@/components/NavBread";
 import Modal from "@/components/Modal";
-import axios from 'axios';
+import axios from "axios";
+// import {currency} from './../util/currency';
 
 export default {
-    data(){
-        return{
-            cartList:[],
-            modalConfirm:false,
-            productId:''
-        }
+  data() {
+    return {
+      cartList: [],
+      modalConfirm: false,
+      productId: ""
+      //selectAllFlag:false
+    };
+  },
+  components: {
+    NavHeader,
+    NavFooter,
+    NavBread,
+    Modal
+  },
+  computed: {
+    selectAllFlag: {
+      get() {
+        return this.selectedCount == this.cartList.length;
+      },
+      set() {}
     },
-    components:{
-        NavHeader,
-        NavFooter,
-        NavBread,
-        Modal
+    selectedCount: {
+      get() {
+        var i = 0;
+        Array.from(this.cartList).forEach(item => {
+          if (item.checked == "1") i++;
+        });
+        return i;
+      },
+      set() {}
     },
-    methods:{
-        init(){
-            axios.get('/users/cartlist').then(response=>{
-                let res=response.data;
-                this.cartList=res.result
-            })  
-        },
-        delCartConfirm(productId){
-            this.productId=productId;
-            this.modalConfirm=true;
-        },
-        delCart(){
-            axios.post('/users/cartDel',{productId:this.productId}).then(response=>{
-                let res=response.data;
-                if(res.status=='0'){
-                    this.modalConfirm=false;
-                    this.init();
-                }
-            })
-        },
-        closeModal(){
-            this.modalConfirm=false;
-        }
-    },
-    mounted(){
-        this.init();
+    totalPrice: {
+      get() {
+        var money = 0;
+        Array.from(this.cartList).forEach(item => {
+          if (item.checked == "1") {
+            money += parseFloat(item.salePrice) * parseInt(item.productNum);
+          }
+        });
+        return money;
+      },
+      set() {}
     }
-}
+  },
+  methods: {
+    init() {
+      axios.get("/users/cartlist").then(response => {
+        let res = response.data;
+        this.cartList = res.result;
+      });
+    },
+    delCartConfirm(productId) {
+      this.productId = productId;
+      this.modalConfirm = true;
+    },
+    delCart() {
+      axios
+        .post("/users/cartDel", { productId: this.productId })
+        .then(response => {
+          let res = response.data;
+          if (res.status == "0") {
+            this.modalConfirm = false;
+            this.init();
+          }
+        });
+    },
+    closeModal() {
+      this.modalConfirm = false;
+    },
+    editCart(flag, item) {
+      if (flag == "add") {
+        item.productNum++;
+      } else if (flag == "minu") {
+        if (item.productNum <= 1) return;
+        item.productNum--;
+      } else {
+        item.checked = !item.checked;
+      }
+      axios
+        .post("/users/cartEdit", {
+          productId: item.productId,
+          productNum: item.productNum,
+          checked: item.checked
+        })
+        .then(response => {
+          let res = response.data;
+        });
+    },
+    selectAll() {
+      var flag = !this.selectAllFlag;
+      this.cartList.forEach(item => {
+        item.checked = flag;
+      });
+      axios.post("/users/selectAll", { checkAll: flag }).then(response => {
+        let res = response.data;
+        if (res.status == "0") {
+          console.log("Select All Success");
+        }
+      });
+    }
+  },
+  mounted() {
+    this.init();
+  }
+  // filters:{
+  //   currency:currency
+  // }
+};
 </script>
 
 <style>
