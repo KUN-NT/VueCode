@@ -191,4 +191,30 @@ router.post('/selectAll', (req, res, next) =>{
   })
 })
 
+router.get('/getCartCount',(req,res,next)=>{
+  if(req.cookies&&req.cookies.userId){
+    let userId=req.cookies.userId;
+    User.findOne({userId:userId},(err,doc)=>{
+      if(err){
+        res.json({
+          state:'1',
+          msg:err.message,
+          result:''
+        })
+      }else{
+        let CartCount=0;
+        let cartList=doc.cartList;
+        cartList.map(item=>{
+          CartCount+=parseInt(item.productNum);
+        })
+        res.json({
+          state:'0',
+          msg:'',
+          result:CartCount
+        })
+      }
+    })
+  }
+})
+
 module.exports = router;

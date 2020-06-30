@@ -11,6 +11,9 @@ import './assets/css/product.css'
 import VueLazyLoad from 'vue-lazyload'
 import infiniteScroll from 'vue-infinite-scroll'
 import {currency} from './util/currency';
+import Vuex from 'vuex';
+
+Vue.use(Vuex);
 
 Vue.use(infiniteScroll);
 
@@ -21,10 +24,29 @@ Vue.config.productionTip = false
 
 Vue.filter('currency',currency)
 
+const store=new Vuex.Store({
+  state:{
+    nickName:'',
+    cartCount:0
+  },
+  mutations:{
+    updateUserInfo(state,nickName){
+      state.nickName=nickName;
+    },
+    updateCartCount(state,cartCount){
+      state.cartCount+=cartCount;
+    },
+    initCartCount(state,cartCount){
+      state.cartCount=cartCount;
+    }
+  }
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
   components: { App },
-  template: '<App/>'
+  template: '<App/>',
+  store
 })
