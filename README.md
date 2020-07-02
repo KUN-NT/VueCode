@@ -4,10 +4,34 @@
 
 ## 项目结构
 
-|- Resource 静态资源
+- imoocmall       旧版网上商城
 
-|- imoocmall 项目目录
+- lemall          升级版网上商城
 
-    |- server 后台项目文件夹
+- vue-toast-demo  自己制作插件
 
-    |- demo 测试项目文件夹
+- webpack_demo    webpack练习
+
+## imoocmall 
+
+```bash
+cd imoocmall
+npm install
+npm run dev
+```
+
+## lemall 
+
+```bash
+cd lemall
+npm install
+npm run serve
+```
+
+## webpack_demo 
+
+```bash
+cd webpack_demo
+npm install
+webpack
+```
