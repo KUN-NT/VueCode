@@ -19,17 +19,25 @@ Toast.install=function(Vue,options){
             }
         }
         const ToastController= Vue.extend(ToastComponet);
+        
         var instance=new ToastController().$mount(document.createElement("div"));
         instance.message=message;
+        instance.visible=true;
+        document.body.appendChild(instance.$el);
+
         setTimeout(()=>{
             instance.visible=false;
             document.body.removeChild(instance.$el);
         },opt.duration);
     };
 
-    Vue.$prototype.$toast["show"]=function(message,option){
-        Vue.$prototype.$toast(message,option);
+    Vue.prototype.$toast["show"]=function(message,option){
+        Vue.prototype.$toast(message,option);
     };
+}
+
+if(window.Vue){
+    Vue.use(Toast);
 }
 
 export default Toast;

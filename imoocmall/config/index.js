@@ -6,10 +6,9 @@ const path = require('path')
 
 module.exports = {
   dev: {
-
     // Paths
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: '/',//如果部署在二级目录需要在此加上二级目录名
     proxyTable: {
       //访问goods时 会默认转到http://localhost:3000
       '/goods':{

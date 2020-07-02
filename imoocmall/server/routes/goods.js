@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var Goods = require('../models/goods');
 
 //连接数据库
-mongoose.connect('mongodb://127.0.0.1:27017/dumall');
+mongoose.connect('mongodb://localhost:27017/dumall');
 mongoose.connection.on("connected", function () {
     console.log("MongoDB connected success.")
 });
