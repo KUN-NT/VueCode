@@ -16,7 +16,9 @@
 
 ```bash
 cd imoocmall
+
 npm install
+
 npm run dev
 ```
 
@@ -24,7 +26,9 @@ npm run dev
 
 ```bash
 cd lemall
+
 npm install
+
 npm run serve
 ```
 
@@ -32,6 +36,8 @@ npm run serve
 
 ```bash
 cd webpack_demo
+
 npm install
+
 webpack
 ```
