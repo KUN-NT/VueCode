@@ -1,8 +1,8 @@
-# IMoocMall
+# VueCode
 
-> 简易网上商城项目
+> Vue项目练习
 
-## 项目结构
+## 项目介绍
 
 - imoocmall       旧版网上商城
 
