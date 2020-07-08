@@ -12,7 +12,7 @@ module.exports = {
     output: {
         path: path.join(__dirname, './dist'),
         filename: 'js/[name].js',
-        publicPath: ''
+        publicPath: '' //引用文件前缀
     },
     module: {
         rules: [
@@ -40,6 +40,20 @@ module.exports = {
         }),
         new CleanWebpackPlugin(),
         new ExtractTextPlugin('index.css')
-    ]
+    ],
+    devServer:{ //开启服务
+        contentBase:__dirname+"/dist",
+        host:"localhost",
+        port:8080,
+        hot:true, //热更新
+        open:true,//默认打开浏览器
+        openPage:'index.html',//默认打开浏览器
+        proxy:{ //接口代理 实现跨域
+            "/api":{ 
+                target:"http://lemall.futurefe.com",
+                changeOrigin:true
+            }
+        }
+    }
     //devtool:'#source-map'
 }

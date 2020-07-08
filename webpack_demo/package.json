@@ -4,7 +4,8 @@
   "description": "webpack demo",
   "main": "webpack.config.js",
   "dependencies": {
-    "webpack": "^4.43.0"
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
   },
   "devDependencies": {
     "clean-webpack-plugin": "^3.0.0",
@@ -12,10 +13,12 @@
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "html-webpack-plugin": "^4.3.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
-    "style-loader": "^1.2.1"
+    "style-loader": "^1.2.1",
+    "webpack-dev-server": "^3.11.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack",
+    "serve": "webpack-dev-server"
   },
   "author": "kun",
   "license": "ISC"
